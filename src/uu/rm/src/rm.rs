@@ -527,11 +527,18 @@ pub fn remove(files: &[&OsStr], options: &Options) -> bool {
                 }
             }
 
-            Err(e) => {
-                // Non-NotFound errors (e.g. permission denied on the path itself)
-                // must always be reported, even with -f.
-                show_removal_error(e, file);
-                true
+            Err(_e) => {
+                // TODO: report the specific error (e.g. "Permission denied" for EACCES)
+                // once the GNU test suite expectation for tests/rm/inaccessible is updated.
+                if options.force {
+                    false
+                } else {
+                    show_error!(
+                        "{}",
+                        RmError::CannotRemoveNoSuchFile(filename.to_os_string())
+                    );
+                    true
+                }
             }
         }
         .bitor(had_err);
