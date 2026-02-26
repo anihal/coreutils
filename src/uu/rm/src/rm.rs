@@ -515,11 +515,7 @@ pub fn remove(files: &[&OsStr], options: &Options) -> bool {
                 }
             }
 
-            Err(_e) => {
-                // TODO: actually print out the specific error
-                // TODO: When the error is not about missing files
-                // (e.g., permission), even rm -f should fail with
-                // outputting the error, but there's no easy way.
+            Err(e) if e.kind() == io::ErrorKind::NotFound => {
                 if options.force {
                     false
                 } else {
@@ -529,6 +525,13 @@ pub fn remove(files: &[&OsStr], options: &Options) -> bool {
                     );
                     true
                 }
+            }
+
+            Err(e) => {
+                // Non-NotFound errors (e.g. permission denied on the path itself)
+                // must always be reported, even with -f.
+                show_removal_error(e, file);
+                true
             }
         }
         .bitor(had_err);
