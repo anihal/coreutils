@@ -2,7 +2,7 @@
 //
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
-// spell-checker:ignore rootlink
+// spell-checker:ignore rootlink ENOTDIR
 #![allow(clippy::stable_sort_primitive)]
 
 use std::process::Stdio;
@@ -1379,7 +1379,7 @@ fn test_preserve_root_literal_root() {
 }
 
 /// Test that `rm -f` silently ignores paths that cannot be stat'd because a
-/// component of the path is not a directory (ENOTDIR), matching GNU behaviour.
+/// component of the path is not a directory (ENOTDIR), matching GNU behavior.
 #[cfg(unix)]
 #[test]
 fn test_rm_force_ignores_symlink_metadata_error() {
